@@ -1,93 +1,125 @@
-"use client";
+import React, { useEffect, useRef } from "react";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+import { Loader } from "@googlemaps/js-api-loader";
 
-// Importing the necessary modules
-import React, { useMemo } from "react";
-import { GoogleMap, useJsApiLoader } from "@react-google-maps/api";
-
-// Your component function (note the uppercase name)
 const MyMap = () => {
-  // map = new google.maps.Map(document.getElementById("map"), {
-  //   center: { lat: 1.3521, lng: 103.8198 },
-  //   zoom: 8,
-  //   mapId: process.env.MAP_ID,
-  // });
+  const mapRef = useRef(null);
 
-  const containerStyle = {
-    width: "70vh",
-    height: "40vh",
-    borderRadius: "10px",
-  };
+  useEffect(() => {
+    const initMap = async () => {
+      if (!mapRef.current) {
+        console.error("Map container is null.");
+        return;
+      }
 
-  // Memoize the center object to avoid unnecessary re-creations
-  const center = useMemo(
-    () => ({
-      lat: 1.3521,
-      lng: 103.8198,
-    }),
-    []
-  ); // Empty dependency array since the center object never changes
+      const loader = new Loader({
+        apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
+        version: "weekly",
+      });
 
-  // Accessing the API key and mapId from environment variables
-  const { isLoaded } = useJsApiLoader({
-    id: "google-map-script",
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
-    libraries: ["places"], // Add any additional libraries as needed
-  });
+      const { Map } = await loader.importLibrary("maps");
 
-  const [map, setMap] = React.useState(null);
-
-  const onLoad = React.useCallback(function callback(map) {
-    // This is just an example of getting and using the map instance!!! don't just blindly copy!
-    setMap(map);
-  }, []); // No dependencies needed here
-
-  const onUnmount = React.useCallback(function callback(map) {
-    setMap(null);
-  }, []);
-
-  const mapOptions = useMemo(() => {
-    if (typeof window !== "undefined" && process.env.MAP_ID) {
-      // Replace the sample style with your actual custom map style
-      const customMapStyle = [
-        {
-          featureType: "water",
-          elementType: "geometry",
-          stylers: [{ color: "#e9e9e9" }, { lightness: 17 }],
-        },
-        // Add more style settings as needed
-      ];
-
-      // Use the StyledMapType to apply custom map styling
-      const styledMapType = new window.google.maps.StyledMapType(
-        customMapStyle,
-        { name: "Styled Map" }
-      );
-
-      return {
-        mapTypeControlOptions: {
-          mapTypeIds: ["roadmap", "satellite", "styled_map"],
-        },
-        mapTypeId: "styled_map",
-        mapTypeControl: false,
+      const initialPosition = {
+        lat: 1.3521,
+        lng: 103.8198,
       };
-    }
-    return {};
-  }, []);
 
-  return isLoaded ? (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={center}
-      zoom={11.5}
-      onLoad={onLoad}
-      onUnmount={onUnmount}
-      options={mapOptions}
+      const mapOptions = {
+        center: initialPosition,
+        zoom: 11.5,
+        mapID: process.env.MAP_ID,
+      };
+
+      // Check if mapRef.current is a valid HTML element
+      if (mapRef.current instanceof HTMLElement) {
+        // setup the map
+        const map = new Map(mapRef.current, mapOptions);
+
+        // array of marker positions
+        const markerPositions = [
+          {
+            lat: 1.3222529807872585,
+            lng: 103.81460427422135,
+            title: "Botanic Gardens, Exit A",
+          },
+          {
+            lat: 1.3044625719176155,
+            lng: 103.85302765317296,
+            title: "Rochor, Exit B",
+          },
+          {
+            lat: 1.307335850672915,
+            lng: 103.7907067875239,
+            title: "Buona Vista, Exit A",
+          },
+          {
+            lat: 1.293263705343925,
+            lng: 103.83379908839584,
+            title: "Great World, Exit 1",
+          },
+          {
+            lat: 1.2797478229738812,
+            lng: 103.86796701960978,
+            title: "Gardens by the Bay MRT",
+          },
+          {
+            lat: 1.3013385316209811,
+            lng: 103.91291265207634,
+            title: "McDonalds Marine Cove",
+          },
+          {
+            lat: 1.4072224761912058,
+            lng: 103.82856470843778,
+            title: "Behind Waterway Point",
+          },
+          {
+            lat: 1.367671784546475,
+            lng: 103.90234282532347,
+            title: "Bishan Park 1",
+          },
+          {
+            lat: 1.4112468194481633,
+            lng: 103.77837388399611,
+            title: "Mandai T15 Trail",
+          },
+
+          // add more markers as needed
+        ];
+
+        // add markers to the map
+        markerPositions.forEach((position) => {
+          // Emoji character as the label content
+          const emojiIcon = "🥩";
+
+          // Create a marker with emoji content and adjust the labelOrigin
+          new google.maps.Marker({
+            position,
+            map,
+            title: position.title,
+            label: {
+              text: emojiIcon,
+              color: "green", // Set label color to transparent
+              fontSize: "24px", // Set the font size as needed
+              fontWeight: "bold",
+              labelOrigin: new google.maps.Point(0, 0), // Set label origin to remove background
+            },
+          });
+        });
+      } else {
+        console.error("Map container is not a valid HTML element.");
+      }
+    };
+
+    initMap();
+  }, []); // Add an empty dependency array to execute the effect only once on mount
+
+  return (
+    <div
+      style={{ height: "40vh", width: "70vh", borderRadius: "10px" }}
+      ref={mapRef}
     >
-      {/* Child components, such as markers, info windows, etc. */}
-      <></>
-    </GoogleMap>
-  ) : (
-    <></>
+      {/* The map container */}
+    </div>
   );
 };
 

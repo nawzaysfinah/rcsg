@@ -1,6 +1,5 @@
 "use client"; // top to the file
 
-import Image from "next/image";
 import MyMap from "./GoogleMap";
 
 export default function Home() {
