@@ -32,7 +32,7 @@ const MyMap = () => {
 
       const mapOptions = {
         center: initialPosition,
-        zoom: 11.5,
+        zoom: 11,
         mapID: process.env.MAP_ID,
       };
 
@@ -246,7 +246,7 @@ const MyMap = () => {
               {/* 🥩{" "} */}
             </label>
             <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
               id="origin-input"
               type="text"
               placeholder="🥩 Start"
@@ -274,12 +274,11 @@ const MyMap = () => {
       </form>
 
       <div
+        className="w-full sm:w-full md:w-11/12 h-96 justify-center"
         style={{
-          className: "max-w-full ",
-          height: "40vh",
-          width: "70vh",
           borderRadius: "10px",
           marginTop: "10px",
+          cursor: "pointer",
         }}
         ref={mapRef}
       >
