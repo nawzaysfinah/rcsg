@@ -20,6 +20,7 @@ const MyMap = () => {
       const loader = new Loader({
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
         version: "weekly",
+        libraries: ["places"], // Load the Places API
       });
 
       const { Map } = await loader.importLibrary("maps");
@@ -84,7 +85,7 @@ const MyMap = () => {
         {
           lat: 1.3013385316209811,
           lng: 103.91291265207634,
-          title: "McDonalds Marine Cove",
+          title: "McDonald's Marine Cove",
         },
         {
           lat: 1.4072224761912058,
@@ -143,40 +144,54 @@ const MyMap = () => {
           destination
         );
       }
+
+      // Add Place Autocomplete to origin and destination inputs
+      const originAutocomplete = new google.maps.places.Autocomplete(
+        document.getElementById("origin-input")
+      );
+      originAutocomplete.setFields(["geometry", "name"]);
+
+      originAutocomplete.addListener("place_changed", () => {
+        const place = originAutocomplete.getPlace();
+
+        if (place.geometry && place.geometry.location) {
+          setOriginInput(place.name);
+          setOrigin(place.geometry.location.toJSON());
+        }
+      });
+
+      const destinationAutocomplete = new google.maps.places.Autocomplete(
+        document.getElementById("destination-input")
+      );
+      destinationAutocomplete.setFields(["geometry", "name"]);
+
+      destinationAutocomplete.addListener("place_changed", () => {
+        const place = destinationAutocomplete.getPlace();
+
+        if (place.geometry && place.geometry.location) {
+          setDestinationInput(place.name);
+          setDestination(place.geometry.location.toJSON());
+        }
+      });
     };
 
     initMap();
   }, [origin, destination]);
 
-  const handleOriginInputChange = (event) => {
-    setOriginInput(event.target.value);
-  };
-
-  const handleDestinationInputChange = (event) => {
-    setDestinationInput(event.target.value);
-  };
-
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    // Geocode origin and destination using Google Maps Geocoding API
-    const geocoder = new google.maps.Geocoder();
+    // No need to manually geocode with Autocomplete
 
-    geocoder.geocode({ address: originInput }, (results, status) => {
-      if (status === "OK" && results.length > 0) {
-        setOrigin(results[0].geometry.location.toJSON());
-      } else {
-        console.error("Geocoding failed for origin:", status);
-      }
-    });
-
-    geocoder.geocode({ address: destinationInput }, (results, status) => {
-      if (status === "OK" && results.length > 0) {
-        setDestination(results[0].geometry.location.toJSON());
-      } else {
-        console.error("Geocoding failed for destination:", status);
-      }
-    });
+    // Generate directions if both origin and destination are set
+    if (origin && destination) {
+      calculateAndDisplayRoute(
+        directionsService.current,
+        mapRef.current,
+        origin,
+        destination
+      );
+    }
   };
 
   // Function to calculate and display route
@@ -190,7 +205,7 @@ const MyMap = () => {
       {
         origin,
         destination,
-        travelMode: google.maps.TravelMode.WALKING,
+        travelMode: google.maps.TravelMode.DRIVING,
       },
       (response, status) => {
         if (status === "OK") {
@@ -221,33 +236,33 @@ const MyMap = () => {
           <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
             <label
               class="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-              for="grid-first-name"
+              for="origin-input"
             >
-              {/* 🥩{" "} */}
+              🥩{" "}
             </label>
             <input
               class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="grid-first-name"
+              id="origin-input"
               type="text"
               placeholder="🥩 Start"
               value={originInput}
-              onChange={handleOriginInputChange}
+              onChange={(e) => setOriginInput(e.target.value)}
             />
           </div>
           <div class="w-full md:w-1/2 px-3">
             <label
               class="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-              for="grid-last-name"
+              for="destination-input"
             >
-              {/* 🏁{" "} */}
+              🏁{" "}
             </label>
             <input
               class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="grid-last-name"
+              id="destination-input"
               type="text"
               placeholder="🏁 End"
               value={destinationInput}
-              onChange={handleDestinationInputChange}
+              onChange={(e) => setDestinationInput(e.target.value)}
             />
           </div>
         </div>
