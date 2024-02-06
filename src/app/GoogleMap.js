@@ -226,7 +226,12 @@ const MyMap = () => {
       <form class="w-full max-w-lg" onSubmit={handleFormSubmit}>
         <div>
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            <button type="submit">Get Directions</button>{" "}
+            <button
+              className="bg-transparent hover:text-green-500 text-white font-bold"
+              type="submit"
+            >
+              Get Directions
+            </button>{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -238,7 +243,7 @@ const MyMap = () => {
               class="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
               for="origin-input"
             >
-              🥩{" "}
+              {/* 🥩{" "} */}
             </label>
             <input
               class="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
@@ -254,7 +259,7 @@ const MyMap = () => {
               class="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
               for="destination-input"
             >
-              🏁{" "}
+              {/* 🏁{" "} */}
             </label>
             <input
               class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
