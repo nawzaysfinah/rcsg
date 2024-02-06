@@ -274,7 +274,7 @@ const MyMap = () => {
       </form>
 
       <div
-        className="w-full sm:w-full md:w-11/12 h-96 justify-center"
+        className="w-full sm:w-full md:w-11/12 h-96 justify-items-center"
         style={{
           borderRadius: "10px",
           marginTop: "10px",
