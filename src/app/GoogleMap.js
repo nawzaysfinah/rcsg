@@ -205,7 +205,7 @@ const MyMap = () => {
       {
         origin,
         destination,
-        travelMode: google.maps.TravelMode.WALKING,
+        travelMode: google.maps.TravelMode.DRIVING,
       },
       (response, status) => {
         if (status === "OK") {
@@ -222,7 +222,7 @@ const MyMap = () => {
   };
 
   return (
-    <div className="mb-32 text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left">
+    <div className="mb-32 text-center max-w-full lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left">
       <form class="w-full max-w-lg" onSubmit={handleFormSubmit}>
         <div>
           <h2 className={`mb-3 text-2xl font-semibold`}>
@@ -275,6 +275,7 @@ const MyMap = () => {
 
       <div
         style={{
+          className: "max-w-full ",
           height: "40vh",
           width: "70vh",
           borderRadius: "10px",
