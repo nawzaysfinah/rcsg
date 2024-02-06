@@ -205,7 +205,7 @@ const MyMap = () => {
       {
         origin,
         destination,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode.WALKING,
       },
       (response, status) => {
         if (status === "OK") {
