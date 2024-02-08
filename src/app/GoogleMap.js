@@ -9,6 +9,9 @@ const MyMap = () => {
   const [destinationInput, setDestinationInput] = useState("");
   const [origin, setOrigin] = useState(null);
   const [destination, setDestination] = useState(null);
+  const [position, setPosition] = useState(null);
+  const [startMarker, setStartMarker] = useState(null);
+  const [distance, setDistance] = useState(null);
 
   useEffect(() => {
     const initMap = async () => {
@@ -41,11 +44,20 @@ const MyMap = () => {
       // Initialize Directions Service
       directionsService.current = new google.maps.DirectionsService();
 
+      // Create marker for start & end positions
+      const startMarker = new Marker({
+        map,
+        animation: google.maps.Animation.DROP,
+      });
+
+      setStartMarker(startMarker);
+
       map.addListener("click", (event) => {
         const clickedLatLng = event.latLng.toJSON();
 
         if (!origin) {
           setOrigin(clickedLatLng);
+          startMarker.setPosition(clickedLatLng);
         } else if (!destination) {
           setDestination(clickedLatLng);
         } else {
@@ -106,18 +118,31 @@ const MyMap = () => {
         // add more markers as needed
       ];
 
+      // Emojis used for markers
+      const meet = {
+        url: "https://em-content.zobj.net/source/microsoft-teams/337/star_2b50.png",
+        scaledSize: new google.maps.Size(30, 30), // Set the desired size in pixels
+      };
+      const start = {
+        url: "https://em-content.zobj.net/source/microsoft-teams/363/backhand-index-pointing-down_medium-light-skin-tone_1f447-1f3fc_1f3fc.png",
+        scaledSize: new google.maps.Size(30, 30), // Set the desired size in pixels
+      };
+      const end = {
+        url: "https://openmoji.org/data/color/svg/1F3C1.svg",
+        scaledSize: new google.maps.Size(50, 50), // Set the desired size in pixels
+      };
+
       // add markers to the map
       markerPositions.forEach((position) => {
         // Emoji character as the label content
-        const emojiIcon = "🥩";
 
         // Create a marker with emoji content and adjust the labelOrigin
         new google.maps.Marker({
           position,
           map,
           title: position.title,
+          icon: meet,
           label: {
-            text: emojiIcon,
             color: "green", // Set label color to transparent
             fontSize: "24px", // Set the font size as needed
             fontWeight: "bold",
@@ -128,11 +153,34 @@ const MyMap = () => {
 
       // Display markers for origin and destination
       if (origin) {
-        new Marker({ position: origin, map, title: "Origin" });
+        new google.maps.Marker({
+          position: origin,
+          map,
+          animation: google.maps.Animation.DROP,
+          title: "Origin",
+          icon: start,
+          label: {
+            color: "blue",
+            fontSize: "30px", // Set the font size as needed
+            fontWeight: "bold",
+            fillColor: "transparent",
+          },
+        });
       }
 
       if (destination) {
-        new Marker({ position: destination, map, title: "Destination" });
+        new google.maps.Marker({
+          position: destination,
+          map,
+          animation: google.maps.Animation.DROP,
+          title: "Destination",
+          icon: end,
+          label: {
+            color: "red",
+            fontSize: "30px", // Set the font size as needed
+            fontWeight: "bold",
+          },
+        });
       }
 
       // Generate directions if both origin and destination are set
@@ -205,10 +253,24 @@ const MyMap = () => {
       {
         origin,
         destination,
-        travelMode: google.maps.TravelMode.DRIVING,
+        travelMode: google.maps.TravelMode.WALKING,
       },
       (response, status) => {
         if (status === "OK") {
+          const route = response.routes[0];
+          const legs = route.legs;
+
+          // Extract distance from the first leg (assuming one route)
+          const totalDistance = legs.reduce(
+            (sum, leg) => sum + leg.distance.value,
+            0
+          );
+
+          // Convert meters to kilometers (or adjust as needed)
+          const distanceInKm = totalDistance / 1000;
+
+          // Set the distance to state
+          setDistance(distanceInKm.toFixed(2));
           new google.maps.DirectionsRenderer({
             map,
             directions: response,
@@ -273,12 +335,27 @@ const MyMap = () => {
         </div>
       </form>
 
+      {distance && (
+        <div className="mt-4 text-white">
+          <p>Distance: {distance} km</p>
+        </div>
+      )}
+
       <div
         className="w-full sm:w-full md:w-11/12 h-96 justify-items-center"
         style={{
           borderRadius: "10px",
           marginTop: "10px",
           cursor: "pointer",
+        }}
+        // Set default mouse to pointer
+        onMouseEnter={() => {
+          // Change the cursor style when the mouse enters the map area
+          mapRef.current.style.cursor = "pointer";
+        }}
+        onMouseLeave={() => {
+          // Reset the cursor style when the mouse leaves the map area
+          mapRef.current.style.cursor = "default";
         }}
         ref={mapRef}
       >
