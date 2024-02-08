@@ -12,7 +12,8 @@ const MyMap = () => {
   const [position, setPosition] = useState(null);
   const [startMarker, setStartMarker] = useState(null);
   const [distance, setDistance] = useState(null);
-  const [steps, setSteps] = useState([]);
+  const [originName, setOriginName] = useState("");
+  const [destinationName, setDestinationName] = useState("");
 
   useEffect(() => {
     const initMap = async () => {
@@ -56,16 +57,29 @@ const MyMap = () => {
       map.addListener("click", (event) => {
         const clickedLatLng = event.latLng.toJSON();
 
-        if (!origin) {
-          setOrigin(clickedLatLng);
-          // startMarker.setPosition(clickedLatLng);
-        } else if (!destination) {
-          setDestination(clickedLatLng);
-        } else {
-          // Reset if both origin and destination are already set
-          setOrigin(clickedLatLng);
-          setDestination(null);
-        }
+        // Use Geocoder to get the address based on the clicked coordinates
+        const geocoder = new google.maps.Geocoder();
+
+        geocoder.geocode({ location: clickedLatLng }, (results, status) => {
+          if (status === "OK" && results[0]) {
+            const address = results[0].formatted_address;
+
+            if (!origin) {
+              setOriginName(address);
+              setOrigin(clickedLatLng);
+              // startMarker.setPosition(clickedLatLng);
+            } else if (!destination) {
+              setDestinationName(address);
+              setDestination(clickedLatLng);
+            } else {
+              // Reset if both origin and destination are already set
+              setOriginName(address);
+              setDestination(null);
+            }
+          } else {
+            console.error("Geocode request failed due to " + status);
+          }
+        });
       });
 
       // array of marker positions
@@ -336,11 +350,15 @@ const MyMap = () => {
             </div>
           </div>
         </form>
-        {distance && (
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 text-grey-100 text-2xl font-semibold text-center">
-            <p>📏 : {distance} km</p>
-          </div>
-        )}
+        <div className=" w-full md:w-1/2 md:mb-0 text-grey-100 text-left px-3 mb-6 py-7">
+          {distance && (
+            <div>
+              <p>📏 : {distance} km</p>
+            </div>
+          )}
+          {originName && <p className="text-green">Start: {originName}</p>}
+          {destinationName && <p>End: {destinationName}</p>}
+        </div>
       </div>
 
       <div
