@@ -12,6 +12,7 @@ const MyMap = () => {
   const [position, setPosition] = useState(null);
   const [startMarker, setStartMarker] = useState(null);
   const [distance, setDistance] = useState(null);
+  const [steps, setSteps] = useState([]);
 
   useEffect(() => {
     const initMap = async () => {
@@ -57,7 +58,7 @@ const MyMap = () => {
 
         if (!origin) {
           setOrigin(clickedLatLng);
-          startMarker.setPosition(clickedLatLng);
+          // startMarker.setPosition(clickedLatLng);
         } else if (!destination) {
           setDestination(clickedLatLng);
         } else {
@@ -285,64 +286,65 @@ const MyMap = () => {
 
   return (
     <div className="mb-32 text-center max-w-full lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left">
-      <form class="w-full max-w-lg" onSubmit={handleFormSubmit}>
-        <div>
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            <button
-              className="bg-transparent hover:text-green-500 text-white font-bold"
-              type="submit"
-            >
-              Get Directions
-            </button>{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-        </div>
-        <div class="flex flex-wrap -mx-3 mb-6">
-          <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label
-              class="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-              for="origin-input"
-            >
-              {/* 🥩{" "} */}
-            </label>
-            <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-              id="origin-input"
-              type="text"
-              placeholder="🥩 Start"
-              value={originInput}
-              onChange={(e) => setOriginInput(e.target.value)}
-            />
+      <div className="flex">
+        <form className="w-full max-w-lg" onSubmit={handleFormSubmit}>
+          <div>
+            <h2 className={`mb-3 text-2xl font-semibold`}>
+              <button
+                className="bg-transparent hover:text-green-500 text-white font-bold"
+                type="submit"
+              >
+                Get Directions
+              </button>{" "}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                -&gt;
+              </span>
+            </h2>
           </div>
-          <div class="w-full md:w-1/2 px-3">
-            <label
-              class="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
-              for="destination-input"
-            >
-              {/* 🏁{" "} */}
-            </label>
-            <input
-              class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-              id="destination-input"
-              type="text"
-              placeholder="🏁 End"
-              value={destinationInput}
-              onChange={(e) => setDestinationInput(e.target.value)}
-            />
+          <div className="flex flex-wrap -mx-3 mb-6 grid-cols-3">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label
+                className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
+                for="origin-input"
+              >
+                {/* 🥩{" "} */}
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                id="origin-input"
+                type="text"
+                placeholder="🥩 Start"
+                value={originInput}
+                onChange={(e) => setOriginInput(e.target.value)}
+              />
+            </div>
+            <div className="w-full md:w-1/2 px-3">
+              <label
+                className="block uppercase tracking-wide text-gray-200 text-xs font-bold mb-2"
+                for="destination-input"
+              >
+                {/* 🏁{" "} */}
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                id="destination-input"
+                type="text"
+                placeholder="🏁 End"
+                value={destinationInput}
+                onChange={(e) => setDestinationInput(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-      </form>
-
-      {distance && (
-        <div className="mt-4 text-white">
-          <p>Distance: {distance} km</p>
-        </div>
-      )}
+        </form>
+        {distance && (
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 mt-4 text-white font-semibold">
+            <p>Distance: {distance} km</p>
+          </div>
+        )}
+      </div>
 
       <div
-        className="w-full sm:w-full md:w-11/12 h-96 justify-items-center"
+        className="w-full sm:w-full md:w-11/12 h-96 justify-items-center justify-end"
         style={{
           borderRadius: "10px",
           marginTop: "10px",
