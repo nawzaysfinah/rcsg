@@ -254,7 +254,7 @@ const MyMap = () => {
       {
         origin,
         destination,
-        travelMode: google.maps.TravelMode.WALKING,
+        travelMode: google.maps.TravelMode.BICYCLING,
       },
       (response, status) => {
         if (status === "OK") {
@@ -337,14 +337,14 @@ const MyMap = () => {
           </div>
         </form>
         {distance && (
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 mt-4 text-white font-semibold">
-            <p>Distance: {distance} km</p>
+          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0 text-grey-100 text-2xl font-semibold text-center">
+            <p>📏 : {distance} km</p>
           </div>
         )}
       </div>
 
       <div
-        className="w-full sm:w-full md:w-11/12 h-96 justify-items-center justify-end"
+        className="w-full sm:w-full md:w-11/12 h-96 justify-items-center"
         style={{
           borderRadius: "10px",
           marginTop: "10px",
