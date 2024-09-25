@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
 import { Loader } from "@googlemaps/js-api-loader";
+const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary(
+  "marker"
+);
 
 const MyMap = () => {
   const mapRef = useRef(null);
@@ -152,7 +155,7 @@ const MyMap = () => {
         // Emoji character as the label content
 
         // Create a marker with emoji content and adjust the labelOrigin
-        new google.maps.Marker({
+        new google.maps.marker.AdvancedMarkerElement({
           position,
           map,
           title: position.title,
@@ -168,7 +171,7 @@ const MyMap = () => {
 
       // Display markers for origin and destination
       if (origin) {
-        new google.maps.Marker({
+        new google.maps.marker.AdvancedMarkerElement({
           position: origin,
           map,
           animation: google.maps.Animation.DROP,
@@ -184,7 +187,7 @@ const MyMap = () => {
       }
 
       if (destination) {
-        new google.maps.Marker({
+        new google.maps.marker.AdvancedMarkerElement({
           position: destination,
           map,
           animation: google.maps.Animation.DROP,
